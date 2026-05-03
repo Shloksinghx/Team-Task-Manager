@@ -1,21 +1,9 @@
+require('dotenv').config();
 const { Pool } = require('pg');
-
-if (!process.env.DATABASE_URL) {
-  throw new Error('Missing DATABASE_URL environment variable');
-}
-
-const dbUrl = new URL(process.env.DATABASE_URL);
-const localHosts = ['localhost', '127.0.0.1', '::1'];
-if (process.env.NODE_ENV === 'production' && localHosts.includes(dbUrl.hostname)) {
-  throw new Error(
-    `DATABASE_URL is configured to use a local host (${dbUrl.hostname}) in production. ` +
-    'Use Railway PostgreSQL or a remote database connection string instead.'
-  );
-}
 
 const pool = new Pool({
   connectionString: process.env.DATABASE_URL,
-  ssl: process.env.NODE_ENV === 'production' ? { rejectUnauthorized: false } : false,
+  ssl: { rejectUnauthorized: false },
 });
 
 const initDB = async () => {
